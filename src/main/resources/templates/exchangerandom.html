@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>兑换</title>
+	<style>
+		body{
+			margin: 0;
+			background-color: #F5F5DC
+		}
+		input{
+			display: block;
+			margin: 15px 0;
+		}
+		#message{
+			display: none;
+			padding-top: 20px;
+		}
+		#box{
+			width: 200px;
+			height: 100px;
+			background-color: #F5F5DC;
+			text-align: center;
+			padding-top: 10px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -100px;
+			margin-top: -50px;
+		}
+		#meng{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			background-color: rgba(0, 0, 0, 0.5);
+			display: none;
+		}
+		#login{
+			width: 300px;
+			position: absolute;
+			top: 20%;
+			left: 50%;
+			margin-left: -100px;
+			margin-top: -50px;
+		}
+		input{
+			border: 1px solid #9B30FF;
+			border-radius: 3px;
+			padding: 5px;
+		}
+		select{
+			border: 1px solid #9B30FF;
+			border-radius: 3px;
+			padding: 5px;
+		}
+		button{
+			border: 1px solid #66CDAA;
+			background-color: #98F5FF;
+			padding: 5px;
+			border-radius: 3px;
+		}
+	</style>
+</head>
+<body>
+	<div id="login">
+		<h1>输入兑换码进行兑换</h1>
+		<form id="duihuanForm" method="post">
+			<input type="text" required placeholder="兑换码" name="u" id="redeemCodeText">
+			<!--输入兑换码后要显示是否被使用-->
+			<button type="button" id="dhBtn">领取礼品</button>
+		</form>
+		<div id="message">
+			<p>请填写详细信息</p>
+			<form id="xinxiForm" method="post">
+				<input type="text" required="required"  id="nameText" placeholder="请填写本人姓名" />
+				<input id="phoneText" name = "mobile" class="form-control" type="text" placeholder="手机号码" required="true"  minlength="11" maxlength="11" />
+				<!--<input type="text" required pattern="[0-9]{11}" placeholder="联系电话" id="phoneText" placeholder="号码格式不正确，请检查" />-->
+				<div class="outer">
+					<select name="province" id="province">
+						<option value="请选择">请选择</option>
+					</select>
+					<select name="city" id="city">
+						<option value="请选择">请选择</option>
+					</select>
+					<select name="town" id="town">
+						<option value="请选择">请选择</option>
+					</select>
+				</div>
+				<input type="text" required="required" placeholder="详细地址" id="addressText" />
+				<button type="button" id="xxBtn">确认提交</button>
+			</form>
+		</div>
+	</div>
+
+	<div id="meng">
+		<div id="box">
+			<p>已提交，可点击查看<a th:href="@{/random/userlook}">详情</a></p>
+			<button type="button" id="boxBtn">确定</button>
+		</div>
+	</div>
+</body>
+
+<script th:src="@{/./js/jquery-2.1.1.min.js}"></script>
+<script th:src="@{/./js/area.js}"></script>
+<script th:src="@{/./js/select.js}"></script>
+<script>
+	var flag = 0;
+	var btnFlag = 0;
+
+	$(function(){
+
+		$("#dhBtn").click(function(){
+// 判断兑换码是否为11位并显示详细信息表
+			var redeemCodeText = $("#redeemCodeText").val();
+			console.log("此时的random"+redeemCodeText);
+			if(redeemCodeText.length!=11){
+				alert("输入错误，请重新输入")
+			}else(
+
+					$.ajax({
+						type:"GET",
+						url:"/random/checkCode",
+						data:{
+					"random":redeemCodeText
+						},
+						//dataType:json,
+						//跨域请求
+
+						success:function(data) {
+							if(data.msg =="success"){
+								//alert("该兑换码可以兑换，请认真填写以下信息");
+								$("#message").css("display","block")
+							}
+							else {
+								alert("兑换码兑换失败，具体原因是"+data.msg);
+							}
+						},
+
+						//以下的error是网络请求出现异常才捕获到的，当服务端处理时都是返回到以上的success或者error
+						error:function(data){
+							alert("兑换过程失败，请查看您的网络是否正常");
+						}
+					})
+
+
+
+			)
+		})
+
+		// 获取详细信息表单数据
+		$("#xxBtn").click(function(){
+			var nameText = $("#nameText").val();
+			var phoneText = $("#phoneText").val();
+			var province = $("#province").find("option:selected").text();
+			var city = $("#city").find("option:selected").text();
+			var town = $("#town").find("option:selected").text();
+			var addressText = $("#addressText").val();
+
+			var redeemCodeText1 = $("#redeemCodeText").val();
+			console.log(nameText)
+			console.log(phoneText)
+			console.log(province,city,town)
+			console.log(addressText)
+
+			var address =province+city+town+addressText;
+
+			$.ajax({
+				type:"GET",
+				url:"/random/useCode",
+				data:{
+					"address":address,
+					"username":nameText,
+					"phone":phoneText,
+					"random":redeemCodeText1
+
+				},
+				//dataType:json,
+				//跨域请求
+
+				success:function(data) {
+					if(data.msg =="success"){
+						//alert("该兑换码可以兑换，请认真填写以下信息");
+						//$("#message").css("display","block")
+						$("#meng").css("display","block")
+						//console.log(1)
+					}
+					else {
+						alert("兑换码兑换失败，具体原因是"+data.msg);
+					}
+				},
+
+				//以下的error是网络请求出现异常才捕获到的，当服务端处理时都是返回到以上的success或者error
+				error:function(data){
+					alert("兑换过程失败，请查看您的网络是否正常");
+				}
+			})
+
+
+
+
+
+		})
+
+		// 提交后弹框
+		$("#boxBtn").click(function(){
+			$("#meng").css("display","none")
+		})
+	})
+</script>
+
+</html>

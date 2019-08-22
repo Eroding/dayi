@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Login</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/lib/StyleSheet1.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/lib/bootstrap-3.3.7/css/bootstrap-theme.min.css}">
+	<link rel="stylesheet" th:href="@{/lib/DataTables-1.10.15/media/css/jquery.dataTables.min.css}">
+	<style>
+		#table {
+			width: 100%;
+			position: absolute;
+			top: 30%;
+			left: 0%;
+			background: white;
+		}
+
+		#meng {
+			height: 100%;
+			display: none;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="login">
+		<h1>输入信息查询</h1>
+		<form id="duihuanForm">
+			<input type="text" required="required" placeholder="手机号码" id="phone" name="u" />
+			<button class="but" type="button" id="bu">手机号码</button>
+		</form>
+	</div>
+
+	<!-- 蒙层 -->
+	<div id="meng">
+		<!-- 弹出窗口 -->
+		<div id="table">
+			<table id="dataTable" class="display">
+				<thead>
+					<tr>
+						<th>赠送人</th>
+						<th>兑换时间</th>
+						<th>收货地址</th>
+						<th>礼品详情</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+
+
+
+	<iframe id="fraSubmit" name="fraSubmit" style="display:none;" scrolling="yes" noresize src="about:blank"></iframe>
+</body>
+
+</html>
+
+<script th:src=@{/lib/DataTables-1.10.15/media/js/jquery.js}></script>
+<script th:src=@{/lib/bootstrap-3.3.7/js/bootstrap.js}></script>
+<script th:src=@{/lib/jQueryDistpicker/dist/distpicker.data.js}></script>
+<script th:src=@{/lib/jQueryDistpicker/dist/distpicker.min.js}></script>
+<script th:src=@{/lib/DataTables-1.10.15/media/js/jquery.dataTables.min.js}></script>
+<script th:src=@{/lib/DataTables-1.10.15/DataTableUtil.js}></script>
+<script th:src=@{/lib/DataTables-1.10.15/table-editable.js}></script>
+<script type="application/javascript">
+
+	$('#bu').click(function () {
+		if($("#phone").val().length == 11){
+			$('#dataTable').DataTable({
+				"language": lang,
+				"destroy": true, //这个如果不加的话不能够再次调用这个函数
+				//文字中文化
+				"ajax": {
+					"url": "/random/findByPhone?phone=" + $('#phone').val(),
+					"type": "POST"
+				},
+				"columns": [
+					{ "data": "presentUserBean.nickname" },
+					{
+						"data": function (obj) {
+							return changeDateFormat(obj.exchangeDate)
+						}
+					},
+					{ "data": "receiveAddressBean.address" },
+					{ "data": "trophyBean.content" }
+				]
+			})
+
+			// 显示蒙层
+			$('#meng').css("display", "block");
+			$('#meng').bind("click", function (e) {
+				var target = $(e.target);
+				if (target.closest("#table").length == 0) {
+					$("#meng").hide();
+				}
+			})
+		}else{
+			alert("错误，请重新输入")
+		}
+
+	});
+
+	
+
+
+	//初始化bootstrap-table的内容
+
+
+	//转换日期格式(时间戳转换为datetime格式)
+	function changeDateFormat(cellval) {
+		var dateVal = cellval + "";
+		if (cellval != null) {
+			var date = new Date(parseInt(dateVal.replace("/Date(", "").replace(")/", ""), 10));
+			var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+			/*  var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+		var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+		var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();*/
+			//+ " " + hours + ":" + minutes + ":" + seconds
+			return date.getFullYear() + "-" + month + "-" + currentDate;
+		}
+	}
+
+
+
+	//初始化页面配置
+	var lang = {
+		"sProcessing": "数据加载中...",
+		"sLengthMenu": "每页 _MENU_ 项",
+		"sZeroRecords": "没有匹配结果",
+		"sInfo": "当前显示第 _START_ 至 _END_ 项，共 _TOTAL_ 项。",
+		"sInfoEmpty": "当前显示第 0 至 0 项，共 0 项",
+		"sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+		"sInfoPostFix": "",
+		"sSearch": "搜索:",
+		"sUrl": "",
+		"sEmptyTable": "表中数据为空,可以尝试修改上面各选项再次查找",
+		"sLoadingRecords": "数据加载中...",
+		"sInfoThousands": ",",
+		"oPaginate": {
+			"sFirst": "首页",
+			"sPrevious": "上页",
+			"sNext": "下页",
+			"sLast": "末页",
+			"sJump": "跳转"
+		},
+		"oAria": {
+			"sSortAscending": ": 以升序排列此列",
+			"sSortDescending": ": 以降序排列此列"
+		}
+	};
+</script>

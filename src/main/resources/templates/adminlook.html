@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>查看用户详情</title>
+	<style>
+		body {
+			text-align: center;
+			background-color: rgba(151, 255, 255, 0.5)
+		}
+
+		table {
+			width: 80%;
+			margin: 50px auto 50px;
+			border: 1px solid #000;
+		}
+
+		thead {
+			width: 80%;
+		}
+
+		button {
+			margin: 0 20px;
+		}
+
+		tr {
+			height: 50px;
+		}
+
+		select {
+			border: none;
+			outline: none;
+			background-color: rgba(151, 255, 255, 0);
+			/* appearance:none;
+			-moz-appearance:none;   
+			-webkit-appearance:none; */
+			font-size: 16px;
+			font-weight: bold;
+			height: 20px;
+		}
+
+		form {
+			margin-top: 50px;
+		}
+
+		form span {
+			display: inline-block;
+			width: 50px;
+			background-color: #fff;
+			border: 1px solid #000;
+			cursor: pointer;
+		}
+		.Btn{
+			background-color: #ccc;
+			border: none;
+			font-size: 15px;
+			cursor: pointer;
+		}
+        a{
+            text-decoration: none;
+        }
+	</style>
+</head>
+
+<body>
+
+	<form th:action="@{/random/findAll}">
+		<select name="trophy" id="product">
+			<option value="" >全部产品</option>
+			<option value="1">水产A礼包</option>
+			<option value="2">水产B礼包</option>
+			<option value="3">水产C礼包</option>
+			<option value="4">水果A礼包</option>
+			<option value="5">水果B礼包</option>
+			<option value="6">水果C礼包</option>
+		</select>
+		<select name="used" id="condition">
+            <option value="" >使用状态</option>
+			<option value="0">未使用</option>
+			<option value="1">已使用</option>
+		</select>
+		<select name="sendGoods" id="state">
+            <option value="" >发货状态</option>
+			<option value="0">未发货</option>
+			<option value="1">已发货</option>
+		</select>
+		<button type="submit">查询</button>
+	</form>
+
+	<table border="1" cellspacing="0" cellpadding="0" id="table">
+		<thead>
+			<tr>
+                <th>兑换码编号</th>
+				<th>用户名</th>
+				<th>手机号</th>
+				<th>地址</th>
+				<th>产品种类</th>
+				<th>兑换日期</th>
+				<th>使用情况</th>
+				<th>发货状态</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr  th:each="page:${pageInfo.list}">
+			<td th:text="${page.getRandom()}"></td>
+			<td th:text="${page.getUsername()}"></td>
+			<td th:text="${page.getPhone()}"></td>
+			<td th:text="${page.getAddress()}"></td>
+			<td th:text="${page.getContent()}"></td>
+			<td th:text="${page.getExchangeDate()}"></td>
+			<td th:text="${page.getUsedStatusEnum().message}"></td>
+			<td th:text="${page.getSendStatusEnum().message}"></td>
+
+		</tr>
+		</tbody>
+	</table>
+
+    <hr />
+    <table class="gridtable" style="width:100%;text-align: center;">
+        <tr>
+            <td th:if="${pageInfo.hasPreviousPage}">
+                <a th:href="'?pageNo=1'">首页</a>
+            </td>
+            <td  th:if="${pageInfo.hasPreviousPage}">
+                <a th:href="'?pageNo='+${pageInfo.prePage}">上一页</a>
+            </td>
+            <td th:each="nav : ${pageInfo.navigatepageNums}">
+                <a th:href="'?pageNo='+${nav}" th:text="${nav}" th:if="${nav != pageInfo.pageNum}"></a>
+                <span style="font-weight: bold" th:if="${nav == pageInfo.pageNum}" th:text="${nav}"></span>
+            </td>
+            <td th:if="${pageInfo.hasNextPage}">
+                <a th:href="'?pageNo='+${pageInfo.nextPage}">下一页</a>
+            </td>
+            <td  th:if="${pageInfo.hasNextPage}">
+                <a th:href="'?pageNo='+${pageInfo.pages}">尾页</a>
+            </td>
+        </tr>
+    </table>
+    <hr />
+    <div>当前页数：<span th:text="${pageInfo.pageNum}"></span></div>
+    <div>每页<span th:text="${pageInfo.pageSize}"></span>条</div>
+    <div>起始行号：<span th:text="${pageInfo.startRow}"></span></div>
+    <div>终止行号：<span th:text="${pageInfo.endRow}"></span></div>
+    <div>总共<span th:text="${pageInfo.total}"></span>条</div>
+    <div>总页数：<span th:text="${pageInfo.pages}"></span></div>
+    <hr />
+    <div>是否为第一页：<span th:text="${pageInfo.isFirstPage}"></span></div>
+    <div>是否为最后一页：<span th:text="${pageInfo.isLastPage}"></span></div>
+    <div>是否有前一页：<span th:text="${pageInfo.hasPreviousPage}"></span></div>
+    <div>是否有下一页：<span th:text="${pageInfo.hasNextPage}"></span></div>
+
+
+</body>
+<script th:src="@{/js/jquery-2.1.1.min.js}"></script>
+<script>
+
+
+	$(function () {
+
+		// ajax渲染表格数据
+	/*	$.ajax({
+			url:"/random/findAll",
+			type:"GET",
+			dataType:"json",
+			data:{
+                "trophy":,
+				"used":,
+				"sendGoods":,
+
+			}
+			success:function(data){
+				// console.log(data.usermsg[0].name)
+				$.each(data.usermsg,function(i,item){
+					var str = "<tr><td>" + item.name + "</td><td>" + item.phone + "</td><td>" + item.location + "</td><td>" + item.product + "</td><td>" + item.exchangeTime + "</td><td>" + item.condition + "</td><td><button type='button' class='Btn'>" + item.state + "</button></td></tr>";
+					// console.log(str);
+					$("#tbody").append(str);
+				})
+			}
+		})*/
+
+		// 表格筛选
+		$("#search").click(function () {
+			// 初始化
+			$("tbody tr").hide();
+			// 三个筛选条件
+			var product = $("#product").val();
+			var condition = $("#condition").val();
+			var state = $("#state").val();
+			// 遍历后进行判断
+			if (product != "全部产品"){
+				$("tbody tr").each(function () {
+					// 如果三个筛选条件相同则显示
+					if ($(this).children("td").eq(3).html() == product && $(this).children("td").eq(5).html() == condition && $(this).children("td").eq(6).children(".Btn").text() == state) {
+						$(this).show();
+						console.log(this)
+						console.log($(this).children("td").eq(3).html(),product)
+						console.log($(this).children("td").eq(5).html(),condition)
+						console.log($(this).children("td").eq(6).children(".Btn").text(),state)
+					}
+				})
+			}else {
+				$("tbody tr").each(function () {
+					// 不用再判断产品类型，只需要判断使用情况和发货与否
+					if ($(this).children("td").eq(5).html() == condition && $(this).children("td").eq(6).children(".Btn").text() == state) {
+						$(this).show();
+						console.log(this)
+						console.log($(this).children("td").eq(3).html(),product)
+						console.log($(this).children("td").eq(5).html(),condition)
+						console.log($(this).children("td").eq(6).children(".Btn").text(),state)
+					}
+				})
+			}
+		})
+
+		
+		// 按钮变换
+		$(document).on('click','.Btn',function(){
+			console.log(1)
+			console.log($(this).val())
+			if($(this).text() == "未发货"){
+				$(this).css("background-color","#0f7");
+				$(this).text("已发货")
+				console.log(2)
+			}else{
+				$(this).css("background-color","#ccc");
+				$(this).text("未发货")
+				console.log(3)
+			}
+		})
+	})
+
+</script>
+
+</html>

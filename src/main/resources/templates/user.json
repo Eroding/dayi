@@ -1,0 +1,58 @@
+{
+	"usermsg":[
+		{
+			"name": "张三",
+			"phone": "123",
+			"location": "道馆",
+			"product": "A礼包",
+			"exchangeTime": "2019-9-3",
+			"condition": "未使用",
+			"state": "未发货"
+		},
+		{
+			"name": "王五",
+			"phone": "456",
+			"location": "市场",
+			"product": "B礼包",
+			"exchangeTime": "2019-9-6",
+			"condition": "未使用",
+			"state": "未发货"
+		},
+		{
+			"name": "赵六",
+			"phone": "789",
+			"location": "前台",
+			"product": "C礼包",
+			"exchangeTime": "2019-9-8",
+			"condition": "未使用",
+			"state": "未发货"
+		},
+		{
+			"name": "张3",
+			"phone": "123",
+			"location": "道馆",
+			"product": "A礼包",
+			"exchangeTime": "2019-9-3",
+			"condition": "未使用",
+			"state": "未发货"
+		},
+		{
+			"name": "王5",
+			"phone": "456",
+			"location": "市场",
+			"product": "B礼包",
+			"exchangeTime": "2019-9-6",
+			"condition": "未使用",
+			"state": "未发货"
+		},
+		{
+			"name": "赵6",
+			"phone": "789",
+			"location": "前台",
+			"product": "C礼包",
+			"exchangeTime": "2019-9-8",
+			"condition": "未使用",
+			"state": "未发货"
+		}
+	]
+}

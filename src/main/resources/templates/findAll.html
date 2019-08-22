@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>全查</title>
+</head>
+<body>
+
+<table >
+    <tr>
+        <td>随机数</td>
+        <td>用户名</td>
+        <td>手机号</td>
+        <td>地址</td>
+        <td>产品描述</td>
+        <td>兑奖日期</td>
+        <td>使用情况</td>
+        <td>使用情况</td>
+        <td>发货情况</td>
+
+    </tr>
+    <tr  th:each="page:${pageInfo.list}">
+        <td th:text="${page.getRandom()}"></td>
+ <td th:text="${page.getUsername()}"></td>
+       <td th:text="${page.getPhone()}"></td>
+      <td th:text="${page.getAddress()}"></td>
+       <td th:text="${page.getContent()}"></td>
+    <td th:text="${page.getExchangeDate()}"></td>
+       <td th:text="${page.getUsed()}"></td>
+        <td th:text="${page.getSendStatusEnum().message}"></td>
+
+    </tr>
+
+
+
+</table>
+</body>
+</html>
